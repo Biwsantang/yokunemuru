@@ -14,7 +14,7 @@ export default function Command() {
     >
       <List.Section title="Results" subtitle={state.results.length + ""}>
         {state.results.map((searchResult) => (
-          <SearchListItem key={searchResult.name} searchResult={searchResult} />
+          <SearchListItem key={searchResult.id} searchResult={searchResult} />
         ))}
       </List.Section>
     </List>
@@ -25,8 +25,7 @@ function SearchListItem({ searchResult }: { searchResult: SearchResult }) {
   return (
     <List.Item
       title={searchResult.name}
-      subtitle={searchResult.description}
-      accessoryTitle={searchResult.username}
+      icon={{ source: searchResult.image}}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
@@ -94,20 +93,53 @@ function useSearch() {
   };
 }
 
-async function performSearch(searchText: string, signal: AbortSignal): Promise<SearchResult[]> {
-  const params = new URLSearchParams();
-  params.append("q", searchText.length === 0 ? "@raycast/api" : searchText);
+const query = `
+  query ($name: String) {
+    Page {
+      media(search: $name, type: ANIME) {
+        id
+        title {
+          romaji
+        }
+        coverImage {
+          medium
+        }
+        averageScore
+        siteUrl
+      }
+    }
+  }
+`
 
-  const response = await fetch("https://api.npms.io/v2/search" + "?" + params.toString(), {
-    method: "get",
-    signal: signal,
+async function performSearch(searchText: string, signal: AbortSignal): Promise<SearchResult[]> {
+  const name = searchText.length === 0 ? "" : searchText;
+
+  const response = await fetch("https://graphql.anilist.co", {
+    method: "post",
+    body: JSON.stringify({
+      query: query,
+      variables: {
+        name: name
+      }
+    }),
+    headers: {'Content-Type': 'application/json'}
   });
 
   const json = (await response.json()) as
     | {
-        results: {
-          package: { name: string; description?: string; publisher?: { username: string }; links: { npm: string } };
-        }[];
+        data: {
+            Page: {
+              media: {
+                id: number
+                title: {
+                  romaji: string;
+                };
+                coverImage: {
+                  medium: string;
+                }
+              }[];
+            };
+          };
       }
     | { code: string; message: string };
 
@@ -115,12 +147,11 @@ async function performSearch(searchText: string, signal: AbortSignal): Promise<S
     throw new Error("message" in json ? json.message : response.statusText);
   }
 
-  return json.results.map((result) => {
+  return json.data.Page.media.map((media) => {
     return {
-      name: result.package.name,
-      description: result.package.description,
-      username: result.package.publisher?.username,
-      url: result.package.links.npm,
+      id: media.id,
+      name: media.title.romaji,
+      image: media.coverImage.medium,
     };
   });
 }
@@ -131,8 +162,7 @@ interface SearchState {
 }
 
 interface SearchResult {
+  id: number
   name: string;
-  description?: string;
-  username?: string;
-  url: string;
+  image: string;
 }
