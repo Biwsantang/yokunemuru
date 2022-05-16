@@ -29,14 +29,7 @@ function SearchListItem({ searchResult }: { searchResult: SearchResult }) {
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser title="Open in Browser" url={searchResult.url} />
-          </ActionPanel.Section>
-          <ActionPanel.Section>
-            <Action.CopyToClipboard
-              title="Copy Install Command"
-              content={`npm install ${searchResult.name}`}
-              shortcut={{ modifiers: ["cmd"], key: "." }}
-            />
+            <Action.OpenInBrowser title="Open in Browser" url={searchResult.siteUrl} />
           </ActionPanel.Section>
         </ActionPanel>
       }
@@ -137,6 +130,7 @@ async function performSearch(searchText: string, signal: AbortSignal): Promise<S
                 coverImage: {
                   medium: string;
                 }
+                siteUrl: string; 
               }[];
             };
           };
@@ -152,6 +146,7 @@ async function performSearch(searchText: string, signal: AbortSignal): Promise<S
       id: media.id,
       name: media.title.romaji,
       image: media.coverImage.medium,
+      siteUrl: media.siteUrl,
     };
   });
 }
@@ -165,4 +160,5 @@ interface SearchResult {
   id: number
   name: string;
   image: string;
+  siteUrl: string;
 }
