@@ -11,9 +11,15 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "index",
+      "name": "animeList",
       "title": "Search Anime",
       "description": "Search Anime from Anilist (Unofficial)",
+      "mode": "view"
+    },
+    {
+      "name": "animeSeason",
+      "title": "Season Anime",
+      "description": "This Season Anime",
       "mode": "view"
     }
   ],
