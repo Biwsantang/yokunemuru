@@ -1,5 +1,5 @@
 import { List } from "@raycast/api";
-import { AnimeListItem } from "./components/AnimeListItem";
+import { AnimeListItem } from "./components/AnimeListSearch";
 import { useSearch } from "./services/search";
 
 export default function animeList() {

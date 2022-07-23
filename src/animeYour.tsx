@@ -2,20 +2,22 @@ import { List } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { AnimeListItem } from "./components/AnimeListSeason";
 import { SearchState, Preferences, animeQuery } from "./utils/utils";
-import { fetchAnime, performFetch } from "./services/services";
+import { fetchAnime, performYourFetch } from "./services/services";
 
 import { getPreferenceValues } from "@raycast/api";
 
 const preferences = getPreferenceValues<Preferences>();
 
-export default function animeSeason() {
+export default function animeYour() {
   const [state, setState] = useState<SearchState>({ results: [], isLoading: true });
 
   const query = `
   query {
     Page {
-      media (season: SUMMER, seasonYear: 2022) {
-        ${animeQuery}
+      mediaList (userName: "biwsantang") {
+        media {
+          ${animeQuery}
+        }
       }
     }
   }
@@ -26,7 +28,7 @@ export default function animeSeason() {
   });
 
   useEffect(() => {
-    fetchAnime(setState, body, false);
+    fetchAnime(setState, body, true);
   }, []);
 
   return (

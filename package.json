@@ -13,23 +13,73 @@
     {
       "name": "animeList",
       "title": "Search Anime",
-      "description": "Search Anime from Anilist (Unofficial)",
-      "mode": "view"
+      "description": "Search Anime from Anilist",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "title_language",
+          "title": "Title Language",
+          "description": "Title language",
+          "type": "dropdown",
+          "data": [
+            {
+              "title": "Romanji",
+              "value": "0"
+            },
+            {
+              "title": "English",
+              "value": "1"
+            },
+            {
+              "title": "Native",
+              "value": "2"
+            }
+          ],
+          "default": "0"
+        }
+      ]
     },
     {
       "name": "animeSeason",
-      "title": "Season Anime",
-      "description": "This Season Anime",
+      "title": "Search Anime This Season",
+      "description": "Search Anime in this from Anilist",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "title_language",
+          "title": "Title Language",
+          "description": "Title language",
+          "type": "dropdown",
+          "data": [
+            {
+              "title": "Romanji",
+              "value": "0"
+            },
+            {
+              "title": "English",
+              "value": "1"
+            },
+            {
+              "title": "Native",
+              "value": "2"
+            }
+          ],
+          "default": "0"
+        }
+      ]
+    },
+    {
+      "name": "animeYour",
+      "title": "Search Your Anime List",
+      "description": "Search Anime in your watchlist from Anilist",
       "mode": "view"
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.32.1",
+    "@raycast/api": "^1.38.1",
     "node-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "~16.10.0",
-    "@types/react": "^17.0.28",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^7.32.0",

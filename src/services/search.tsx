@@ -1,85 +1,30 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Toast, showToast } from "@raycast/api";
-import { anime, animeFormat, animeSeason, SearchState } from "../utils/utils";
-import fetch, { AbortError} from "node-fetch";
+import { anime, SearchState, animeQuery } from "../utils/utils";
+import { AbortError } from "node-fetch";
+import { performFetch } from "./services";
 
-const query = `
+export function performSearch(searchText: string, signal: AbortSignal): Promise<anime[]> {
+  const name = searchText.length === 0 ? "" : searchText;
+
+  const query = `
   query ($name: String) {
     Page {
-      media(search: $name, type: ANIME) {
-        id
-        title {
-          romaji
-          english
-          native
-        }
-        coverImage {
-          medium
-          large
-        }
-        format
-        season
-        seasonYear
-        siteUrl
+      media (search: $name, type: ANIME) {
+        ${animeQuery}
       }
     }
   }
-`;
+  `;
 
-export async function performSearch(searchText: string, signal: AbortSignal): Promise<anime[]> {
-  const name = searchText.length === 0 ? "" : searchText;
-
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "post",
-    body: JSON.stringify({
-      query: query,
-      variables: {
-        name: name,
-      },
-    }),
-    headers: { "Content-Type": "application/json" },
+  const body = JSON.stringify({
+    query: query,
+    variables: {
+      name: name,
+    },
   });
 
-  const json = (await response.json()) as
-    | {
-        data: {
-          Page: {
-            media: {
-              id: number;
-              title: {
-                romaji: string;
-                english: string;
-                native: string;
-              };
-              coverImage: {
-                medium: string;
-                large: string;
-              };
-              format: string;
-              season: string;
-              seasonYear: string;
-              siteUrl: string;
-            }[];
-          };
-        };
-      }
-    | { code: string; message: string };
-
-  if (!response.ok || "message" in json) {
-    throw new Error("message" in json ? json.message : response.statusText);
-  }
-
-  return json.data.Page.media.map((media) => {
-    return {
-      id: media.id,
-      name: media.title.romaji,
-      image: media.coverImage.medium,
-      format: animeFormat[media.format],
-      season: animeSeason[media.season],
-      seasonYear: media.seasonYear,
-      siteUrl: media.siteUrl,
-    };
-  });
+  return performFetch(body);
 }
 
 export function useSearch() {
