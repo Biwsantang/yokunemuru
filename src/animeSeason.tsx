@@ -12,29 +12,32 @@ export default function animeSeason() {
   const [state, setState] = useState<SearchState>({ results: [], isLoading: true });
 
   const query = `
-  query {
-    Page {
-      media (season: SUMMER, seasonYear: 2022) {
+  query ($page: Int) {
+    Page (page: $page) {
+      pageInfo {
+        currentPage
+        hasNextPage
+      }
+      media (season: SUMMER, seasonYear: 2022, sort:[SCORE_DESC]) {
         ${animeQuery}
       }
     }
   }
   `;
 
-  const body = JSON.stringify({
-    query: query,
-  });
-
   useEffect(() => {
-    fetchAnime(setState, body, false);
+    console.debug("Running animeSeason");
+
+    fetchAnime(setState, query, false);
   }, []);
 
   return (
     <List isLoading={state.isLoading}>
       {state.results
-        .sort(
+        .filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i)
+        /*.sort(
           (a, b) => (b.averageScore ? parseInt(b.averageScore) : 0) - (a.averageScore ? parseInt(a.averageScore) : 0)
-        )
+        )*/
         .map((anime) => (
           <AnimeListItem key={anime.id} anime={anime} preferences={preferences} />
         ))}

@@ -4,13 +4,13 @@ import { anime, SearchState, animeQuery } from "../utils/utils";
 import { AbortError } from "node-fetch";
 import { performFetch } from "./services";
 
-export function performSearch(searchText: string, signal: AbortSignal): Promise<anime[]> {
+export async function performSearch(searchText: string, signal: AbortSignal): Promise<anime[]> {
   const name = searchText.length === 0 ? "" : searchText;
 
   const query = `
   query ($name: String) {
     Page {
-      media (search: $name, type: ANIME) {
+      media (search: $name, type: ANIME, sort:[SCORE_DESC]) {
         ${animeQuery}
       }
     }
@@ -24,7 +24,9 @@ export function performSearch(searchText: string, signal: AbortSignal): Promise<
     },
   });
 
-  return performFetch(body);
+  const [results, page] = await performFetch(body, false);
+
+  return results;
 }
 
 export function useSearch() {
@@ -40,6 +42,8 @@ export function useSearch() {
         isLoading: true,
       }));
       try {
+        console.debug("Searching animeList", searchText);
+
         const results = await performSearch(searchText, cancelRef.current.signal);
         setState((oldState) => ({
           ...oldState,

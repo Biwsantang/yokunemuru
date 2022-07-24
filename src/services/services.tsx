@@ -1,15 +1,37 @@
 import { showToast, Toast } from "@raycast/api";
 import fetch, { AbortError } from "node-fetch";
-import { anime, animeMedia, mapAnime, SearchState } from "../utils/utils";
+import { anime, mapAnime, SearchState, responseAnime, responseYourAnime, pageInfo, animeMedia } from "../utils/utils";
 
-export async function fetchAnime(setState: any, body: string, mediaList: boolean): Promise<void> {
+export async function fetchAnime(setState: any, query: string, mediaList = false): Promise<void> {
+  const pagination = {
+    animeList: [] as anime[],
+    hasNextPage: true as boolean,
+    page: 1 as number,
+  };
+
   try {
-    const results = mediaList ? await performYourFetch(body) : await performFetch(body);
-    setState((oldState: SearchState) => ({
-      ...oldState,
-      results: results,
-      isLoading: false,
-    }));
+    do {
+      console.debug("Fetching Page:", pagination.page);
+
+      const body: string = JSON.stringify({
+        query: query,
+        variables: {
+          page: pagination.page,
+        },
+      });
+
+      const [results, pageInfo] = await performFetch(body, mediaList);
+      pagination.animeList = pagination.animeList.concat(results);
+      pagination.hasNextPage = pageInfo.hasNextPage;
+
+      setState((oldState: SearchState) => ({
+        ...oldState,
+        results: pagination.animeList,
+        isLoading: pagination.hasNextPage,
+      }));
+
+      pagination.page += 1;
+    } while (pagination.hasNextPage);
   } catch (error) {
     setState((oldState: SearchState) => ({
       ...oldState,
@@ -25,56 +47,28 @@ export async function fetchAnime(setState: any, body: string, mediaList: boolean
   }
 }
 
-const init = {
-  method: "post",
-  body: null,
-  headers: { "Content-Type": "application/json" },
-};
-
-export async function performFetch(body: string): Promise<anime[]> {
+export async function performFetch(body: string, mediaList: boolean): Promise<[anime[], pageInfo]> {
   const response = await fetch("https://graphql.anilist.co", {
-    ...init,
+    method: "post",
+    headers: { "Content-Type": "application/json" },
     body: body,
   });
 
-  const json = (await response.json()) as
-    | {
-        data: {
-          Page: {
-            media: animeMedia[];
-          };
-        };
-      }
-    | { code: string; message: string };
+  if (mediaList) {
+    const json = (await response.json()) as responseYourAnime | { code: string; message: string };
+
+    if (!response.ok || "message" in json) {
+      throw new Error("message" in json ? json.message : response.statusText);
+    }
+
+    return [json.data.Page.mediaList.map(({ media }) => mapAnime(media)), json.data.Page.pageInfo];
+  }
+
+  const json = (await response.json()) as responseAnime | { code: string; message: string };
 
   if (!response.ok || "message" in json) {
     throw new Error("message" in json ? json.message : response.statusText);
   }
 
-  return json.data.Page.media.map((media) => mapAnime(media));
-}
-
-export async function performYourFetch(body: string): Promise<anime[]> {
-  const response = await fetch("https://graphql.anilist.co", {
-    ...init,
-    body: body,
-  });
-
-  const json = (await response.json()) as
-    | {
-        data: {
-          Page: {
-            mediaList: {
-              media: animeMedia;
-            }[];
-          };
-        };
-      }
-    | { code: string; message: string };
-
-  if (!response.ok || "message" in json) {
-    throw new Error("message" in json ? json.message : response.statusText);
-  }
-
-  return json.data.Page.mediaList.map(({ media }) => mapAnime(media));
+  return [json.data.Page.media.map((media) => mapAnime(media)), json.data.Page.pageInfo];
 }

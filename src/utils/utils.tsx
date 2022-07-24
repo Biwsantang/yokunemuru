@@ -97,6 +97,11 @@ export interface animeMedia {
   siteUrl: string;
 }
 
+export interface pageInfo {
+  currentPage: number;
+  hasNextPage: boolean;
+}
+
 export const animeQuery = `
 id
 title {
@@ -175,5 +180,25 @@ export function mapAnime(media: animeMedia) {
     hashtag: media.hashtag,
     genres: media.genres,
     siteUrl: media.siteUrl,
+  };
+}
+
+export interface responseAnime {
+  data: {
+    Page: {
+      pageInfo: pageInfo;
+      media: animeMedia[];
+    };
+  };
+}
+
+export interface responseYourAnime {
+  data: {
+    Page: {
+      pageInfo: pageInfo;
+      mediaList: {
+        media: animeMedia;
+      }[];
+    };
   };
 }
