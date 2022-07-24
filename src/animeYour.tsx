@@ -1,4 +1,4 @@
-import { List } from "@raycast/api";
+import { List, Cache } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { AnimeListItem } from "./components/AnimeListSeason";
 import { SearchState, Preferences, animeQuery } from "./utils/utils";
@@ -7,7 +7,11 @@ import { fetchAnime } from "./services/services";
 import { getPreferenceValues } from "@raycast/api";
 import { AnimeStatusDropdown } from "./components/AnimeStatusDropdown";
 
+import moment from "moment";
+
 const preferences = getPreferenceValues<Preferences>();
+
+const cache = new Cache();
 
 export default function animeYour() {
   const [state, setState] = useState<SearchState>({ results: [], isLoading: true });
@@ -47,7 +51,17 @@ export default function animeYour() {
   useEffect(() => {
     console.debug("Running animeYour");
 
-    fetchAnime(setState, query, true);
+    if (cache.has("animeYour") && moment(JSON.parse(cache.get("animeYour") as string).date) >= moment()) {
+      console.log("use cache from animeYour");
+
+      setState((prev) => ({
+        ...prev,
+        results: JSON.parse(cache.get("animeYour") as string).animeList,
+        isLoading: false,
+      }));
+    } else {
+      fetchAnime(setState, query, true, "animeYour");
+    }
   }, []);
 
   return (

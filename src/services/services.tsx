@@ -1,4 +1,5 @@
-import { showToast, Toast } from "@raycast/api";
+import { Cache, showToast, Toast } from "@raycast/api";
+import moment from "moment";
 import fetch, { AbortError } from "node-fetch";
 import {
   anime,
@@ -11,7 +12,9 @@ import {
   mapMediaList,
 } from "../utils/utils";
 
-export async function fetchAnime(setState: any, query: string, mediaList = false): Promise<void> {
+const cache = new Cache();
+
+export async function fetchAnime(setState: any, query: string, mediaList = false, cacheKey: string): Promise<void> {
   const pagination = {
     animeList: [] as anime[],
     hasNextPage: true as boolean,
@@ -41,6 +44,9 @@ export async function fetchAnime(setState: any, query: string, mediaList = false
 
       pagination.page += 1;
     } while (pagination.hasNextPage);
+
+    console.debug("Set cache for animeYour");
+    cache.set(cacheKey, JSON.stringify({ animeList: pagination.animeList, date: moment().add(1, "minutes") }));
   } catch (error) {
     setState((oldState: SearchState) => ({
       ...oldState,

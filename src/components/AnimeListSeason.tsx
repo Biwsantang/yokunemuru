@@ -3,11 +3,11 @@ import { anime, Preferences } from "../utils/utils";
 
 export function AnimeListItem({
   anime,
-  filterStatus,
+  filterStatus = "",
   preferences,
 }: {
   anime: anime;
-  filterStatus: string;
+  filterStatus?: string;
   preferences: Preferences;
 }) {
   return (
