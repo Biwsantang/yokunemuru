@@ -14,7 +14,7 @@ import {
 
 const cache = new Cache();
 
-export async function fetchAnime(setState: any, query: string, mediaList = false, cacheKey: string): Promise<void> {
+export async function fetchAnime(setState: any, query: string, mediaList: boolean = false, cacheKey?: string): Promise<void> {
   const pagination = {
     animeList: [] as anime[],
     hasNextPage: true as boolean,
@@ -46,7 +46,8 @@ export async function fetchAnime(setState: any, query: string, mediaList = false
     } while (pagination.hasNextPage);
 
     console.debug("Set cache for animeYour");
-    cache.set(cacheKey, JSON.stringify({ animeList: pagination.animeList, date: moment().add(1, "minutes") }));
+    if (cacheKey) cache.set(cacheKey, JSON.stringify({ animeList: pagination.animeList, date: moment().add(1, "minutes") }));
+
   } catch (error) {
     setState((oldState: SearchState) => ({
       ...oldState,
