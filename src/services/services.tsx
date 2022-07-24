@@ -1,6 +1,15 @@
 import { showToast, Toast } from "@raycast/api";
 import fetch, { AbortError } from "node-fetch";
-import { anime, mapAnime, SearchState, responseAnime, responseYourAnime, pageInfo, animeMedia } from "../utils/utils";
+import {
+  anime,
+  mapAnime,
+  SearchState,
+  responseAnime,
+  responseYourAnime,
+  pageInfo,
+  animeMedia,
+  mapMediaList,
+} from "../utils/utils";
 
 export async function fetchAnime(setState: any, query: string, mediaList = false): Promise<void> {
   const pagination = {
@@ -61,7 +70,7 @@ export async function performFetch(body: string, mediaList: boolean): Promise<[a
       throw new Error("message" in json ? json.message : response.statusText);
     }
 
-    return [json.data.Page.mediaList.map(({ media }) => mapAnime(media)), json.data.Page.pageInfo];
+    return [json.data.Page.mediaList.map((media) => mapMediaList(media)), json.data.Page.pageInfo];
   }
 
   const json = (await response.json()) as responseAnime | { code: string; message: string };

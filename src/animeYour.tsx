@@ -34,6 +34,8 @@ export default function animeYour() {
         hasNextPage
       }
       mediaList (userName: "biwsantang", sort: [SCORE_DESC]) {
+        status
+        progress
         media {
           ${animeQuery}
         }
@@ -53,21 +55,15 @@ export default function animeYour() {
       isLoading={state.isLoading}
       searchBarAccessory={<AnimeStatusDropdown animeStatus={animeStatus} onAnimeStatusChange={onAnimeStatusChange} />}
     >
-      {filterStatus == "All" &&
-        state.results
-          .filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i)
-          /*.sort(
+      {state.results
+        .filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i)
+        .filter((v) => (filterStatus != "ALL" ? v.watchStatus == filterStatus : true))
+        .sort(
           (a, b) => (b.averageScore ? parseInt(b.averageScore) : 0) - (a.averageScore ? parseInt(a.averageScore) : 0)
-        )*/
-          .map((anime) => <AnimeListItem key={anime.id} anime={anime} preferences={preferences} />)}
-      {filterStatus != "All" &&
-        state.results
-          .filter((v, i, a) => a.findIndex((v2) => v2.id === v.id) === i)
-          .filter((v) => v.status == "RELEASING")
-          /*.sort(
-          (a, b) => (b.averageScore ? parseInt(b.averageScore) : 0) - (a.averageScore ? parseInt(a.averageScore) : 0)
-        )*/
-          .map((anime) => <AnimeListItem key={anime.id} anime={anime} preferences={preferences} />)}
+        )
+        .map((anime) => (
+          <AnimeListItem key={anime.id} anime={anime} filterStatus={filterStatus} preferences={preferences} />
+        ))}
     </List>
   );
 }

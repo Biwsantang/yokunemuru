@@ -1,13 +1,28 @@
 import { List, ActionPanel, Action } from "@raycast/api";
 import { anime, Preferences } from "../utils/utils";
 
-export function AnimeListItem({ anime, preferences }: { anime: anime; preferences: Preferences }) {
+export function AnimeListItem({
+  anime,
+  filterStatus,
+  preferences,
+}: {
+  anime: anime;
+  filterStatus: string;
+  preferences: Preferences;
+}) {
   return (
     <List.Item
       title={anime.name}
       icon={{ source: anime.image }}
       subtitle={anime.format}
-      accessories={[{ text: anime.averageScore ? (parseInt(anime.averageScore) / 10).toString() : "-" }]}
+      accessories={
+        filterStatus == "CURRENT"
+          ? [
+              { text: `${anime.progress}/${anime.episodes}` },
+              { text: anime.averageScore ? (parseInt(anime.averageScore) / 10).toString() : "-" },
+            ]
+          : [{ text: anime.averageScore ? (parseInt(anime.averageScore) / 10).toString() : "-" }]
+      }
       actions={
         <ActionPanel>
           <ActionPanel.Section>

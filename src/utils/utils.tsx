@@ -42,10 +42,13 @@ export interface anime {
   type: string;
   format: string;
   status: string;
+  watchStatus: string;
+  progress: string;
   //startDate: Date;
   //endDate: Date;
   season: string;
   seasonYear: string;
+  episodes: string;
   averageScore: string; // num
   meanScore: string; // num
   popularity: string; // num
@@ -76,6 +79,7 @@ export interface animeMedia {
   endDate: Date;
   season: string;
   seasonYear: string; // num
+  episodes: string;
   averageScore: string; // num
   meanScore: string; // num
   popularity: string; // num
@@ -129,6 +133,7 @@ endDate {
 }
 season
 seasonYear
+episodes
 averageScore
 meanScore
 popularity
@@ -149,7 +154,7 @@ studios {
 }
 */
 
-export function mapAnime(media: animeMedia) {
+export function mapAnime(media: animeMedia, status = "", progress = "") {
   return {
     id: media.id,
     name: media.title.romaji,
@@ -159,6 +164,8 @@ export function mapAnime(media: animeMedia) {
     type: media.type,
     format: animeFormat[media.format],
     status: media.status,
+    watchStatus: status,
+    progress: progress,
     /*startDate: {
       media.startDate.year,
       media.startDate.month,
@@ -171,6 +178,7 @@ export function mapAnime(media: animeMedia) {
     }*/
     season: animeSeason[media.season],
     seasonYear: media.seasonYear,
+    episodes: media.episodes,
     averageScore: media.averageScore,
     meanScore: media.meanScore,
     popularity: media.popularity,
@@ -181,6 +189,10 @@ export function mapAnime(media: animeMedia) {
     genres: media.genres,
     siteUrl: media.siteUrl,
   };
+}
+
+export function mapMediaList(mediaList: any): anime {
+  return mapAnime(mediaList.media, mediaList.status, mediaList.progress);
 }
 
 export interface responseAnime {
@@ -197,6 +209,8 @@ export interface responseYourAnime {
     Page: {
       pageInfo: pageInfo;
       mediaList: {
+        status: string;
+        progress: string;
         media: animeMedia;
       }[];
     };
