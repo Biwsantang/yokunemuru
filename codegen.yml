@@ -7,8 +7,6 @@ generates:
   src/schema.generated.ts:
     plugins:
       - typescript
-    config:
-      constEnums: true
   src/:
     documents:
       - "src/**/*.gql"

@@ -1,5 +1,13 @@
-query getMedia($name: String) {
-  Media (search: $name) {
-    id
+query searchName($name: String) {
+  Page {
+    media(search: $name) {
+      id
+      title {
+        romaji
+      }
+      format
+      averageScore
+      siteUrl
+    }
   }
 }
