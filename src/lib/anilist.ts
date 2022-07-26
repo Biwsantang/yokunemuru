@@ -1,6 +1,6 @@
 import { showToast, Toast } from "@raycast/api";
 import { AbortError } from "node-fetch";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Media } from "../schema.generated";
 
 export function useAnilist(perform: CallableFunction) {
@@ -43,13 +43,6 @@ export function useAnilist(perform: CallableFunction) {
     },
     [cancelRef, setState]
   );
-
-  useEffect(() => {
-    //search("");
-    return () => {
-      cancelRef.current?.abort();
-    };
-  }, []);
 
   return {
     state: state,
