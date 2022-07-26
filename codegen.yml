@@ -1,0 +1,19 @@
+overwrite: true
+schema:
+  - https://graphql.anilist.co/graphql:
+      headers:
+        Content-Type: "application/json"
+generates:
+  src/schema.generated.ts:
+    plugins:
+      - typescript
+    config:
+      constEnums: true
+  src/:
+    documents:
+      - "src/**/*.gql"
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: schema.generated.ts
+    plugins:
+      - typescript-operations

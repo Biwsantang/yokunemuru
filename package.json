@@ -11,76 +11,21 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "animeList",
+      "name": "index",
       "title": "Search Anime",
       "description": "Search Anime from Anilist",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "title_language",
-          "title": "Title Language",
-          "description": "Title language",
-          "type": "dropdown",
-          "data": [
-            {
-              "title": "Romanji",
-              "value": "0"
-            },
-            {
-              "title": "English",
-              "value": "1"
-            },
-            {
-              "title": "Native",
-              "value": "2"
-            }
-          ],
-          "default": "0"
-        }
-      ]
-    },
-    {
-      "name": "animeSeason",
-      "title": "Search Anime This Season",
-      "description": "Search Anime in this from Anilist",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "title_language",
-          "title": "Title Language",
-          "description": "Title language",
-          "type": "dropdown",
-          "data": [
-            {
-              "title": "Romanji",
-              "value": "0"
-            },
-            {
-              "title": "English",
-              "value": "1"
-            },
-            {
-              "title": "Native",
-              "value": "2"
-            }
-          ],
-          "default": "0"
-        }
-      ]
-    },
-    {
-      "name": "animeYour",
-      "title": "Search Your Anime List",
-      "description": "Search Anime in your watchlist from Anilist",
       "mode": "view"
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.38.1",
-    "moment": "^2.29.4",
-    "node-fetch": "^3.0.0"
+    "node-fetch": "^3.2.9"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.9.1",
+    "@graphql-codegen/near-operation-file-preset": "^2.4.0",
+    "@graphql-codegen/typescript": "^2.7.2",
+    "@graphql-codegen/typescript-operations": "^2.5.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^7.32.0",
@@ -93,6 +38,7 @@
     "build": "ray build -e dist",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
-    "lint": "ray lint"
+    "lint": "ray lint",
+    "gen": "graphql-codegen --config codegen.yml"
   }
 }

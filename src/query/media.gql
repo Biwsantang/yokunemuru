@@ -1,0 +1,5 @@
+query getMedia($name: String) {
+  Media (search: $name) {
+    id
+  }
+}
