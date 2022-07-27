@@ -1,113 +1,58 @@
-import fetch from "node-fetch";
-import {
-  SearchNameQuery,
-  SearchNameQueryVariables,
-  SeasonalQuery,
-  SeasonalQueryVariables,
-} from "../query/media.generated";
-import { Media, Page } from "../schema.generated";
+import { GraphQLClient } from "graphql-request";
+import { getSdk } from "../query/media.generated";
+import { useState, useEffect, useRef } from "react";
+import { Media } from "../schema.generated";
 
-export async function performSearch(searchText: string, signal: AbortSignal): Promise<Media[]> {
-  const query = `
-      query ($name: String){
-        Page {
-          media(search: $name, format_in: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC]) {
-            id
-            title {
-              romaji
-              english
-              native
-            }
-            coverImage {
-              medium
-            }
-            format
-            averageScore
-            genres
-            siteUrl
-          }
+const api = getSdk(
+  new GraphQLClient("https://graphql.anilist.co", {
+    headers: {
+      "Content-Type": "Application/json",
+    },
+  })
+);
+
+export const useSearch = (searchText: string | undefined) => {
+  const [result, setResult] = useState<Media[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function fetch() {
+
+      try {
+
+        if (searchText === undefined || !searchText || searchText.trim().length === 0) return;
+
+        setLoading(true);
+
+        console.debug("search:", searchText);
+
+        const query = { name: searchText };
+
+        console.debug("0/1 Fetching", searchText)
+        const result = await api.searchName(query);
+        console.debug("1/1 Fetching", searchText)
+
+        setResult(result.Page?.media as Media[])
+
+      } catch (error) {
+        if (error instanceof Error) {
+          setError(error);
+        } else {
+          setError(new Error("An error occurred while searching for anime"));
         }
+        setResult([]);
+      } finally {
+        setLoading(false);
       }
-    `;
-  const variables: SearchNameQueryVariables = { name: searchText };
+    }
+    fetch();
+  }, [searchText]);
 
-  console.debug("0/1 Fetching SeachName:", searchText);
-
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: query,
-      variables: variables,
-    }),
-    signal: signal,
-  });
-
-  console.debug("1/1 Fetching SeachName:", searchText);
-
-  const json: { data: SearchNameQuery } | { code: string; message: string } = (await response.json()) as
-    | { data: SearchNameQuery }
-    | { code: string; message: string };
-
-  if (!json || json === undefined || !response.ok || "message" in json) {
-    throw new Error(json && json !== undefined && "message" in json ? json.message : response.statusText);
-  }
-
-  return json.data?.Page?.media as Media[];
-}
-
-export async function performSeasonal(page: number, signal: AbortSignal): Promise<Page> {
-  const query = `
-      query ($page: Int) {
-        Page (page: $page) {
-          pageInfo {
-            currentPage
-            hasNextPage
-          }
-          media(season: SUMMER, seasonYear: 2022, sort: [SCORE_DESC]) {
-            id
-            title {
-              romaji
-              english
-              native
-            }
-            coverImage {
-              medium
-            }
-            format
-            averageScore
-            genres
-            siteUrl
-          }
-        }
-      }
-      `;
-
-  const variables: SeasonalQueryVariables = {
-    page: page,
+  return {
+    result,
+    error,
+    loading,
   };
 
-  console.debug("0/1 Fetching Seasonal", variables.page);
-
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query: query,
-      variables: variables,
-    }),
-    signal: signal,
-  });
-
-  console.debug("1/1 Fetching Seasonal", variables.page);
-
-  const json: { data: SeasonalQuery } | { code: string; message: string } = (await response.json()) as
-    | { data: SeasonalQuery }
-    | { code: string; message: string };
-
-  if (!json || json === undefined || !response.ok || "message" in json) {
-    throw new Error(json && json !== undefined && "message" in json ? json.message : response.statusText);
-  }
-
-  return json.data?.Page as Page;
 }
