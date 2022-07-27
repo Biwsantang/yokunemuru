@@ -15,6 +15,12 @@
       "title": "Search Anime",
       "description": "Search Anime from Anilist",
       "mode": "view"
+    },
+    {
+      "name": "seasonal",
+      "title": "Search Seasonal Anime",
+      "description": "Search Seasonal Anime",
+      "mode": "view"
     }
   ],
   "dependencies": {

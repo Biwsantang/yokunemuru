@@ -1,12 +1,42 @@
 query searchName($name: String) {
   Page {
-    media(search: $name) {
+    media(search: $name, format_in: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC]) {
       id
       title {
         romaji
+        english
+        native
+      }
+      coverImage {
+        medium
       }
       format
       averageScore
+      genres
+      siteUrl
+    }
+  }
+}
+
+query seasonal($page: Int) {
+  Page(page: $page) {
+    pageInfo {
+      currentPage
+      hasNextPage
+    }
+    media(season: SUMMER, seasonYear: 2022, sort: [SCORE_DESC]) {
+      id
+      title {
+        romaji
+        english
+        native
+      }
+      coverImage {
+        medium
+      }
+      format
+      averageScore
+      genres
       siteUrl
     }
   }

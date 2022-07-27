@@ -1,14 +1,19 @@
 import { List } from "@raycast/api";
-import { Media } from "./schema.generated";
 
 import { SearchListItem } from "./components/SearchListItem";
 import { useAnilist } from "./lib/anilist";
 import { performSearch } from "./lib/services";
 
 export default function Command() {
-  const { state, anilist } = useAnilist(
-    (searchText: string, signal: AbortSignal): Promise<Media[]> => performSearch(searchText, signal)
-  );
+  const { state, setState, anilist } = useAnilist(async (searchText: string, signal: AbortSignal) => {
+    const results = await performSearch(searchText, signal);
+
+    setState((oldState) => ({
+      ...oldState,
+      results: results,
+      isLoading: false,
+    }));
+  });
 
   return (
     <List

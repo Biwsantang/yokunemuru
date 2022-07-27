@@ -11,7 +11,7 @@ export function useAnilist(perform: CallableFunction) {
   const cancelRef = useRef<AbortController | null>(null);
 
   const anilist = useCallback(
-    async function anilist(searchText: string) {
+    async function anilist(variables?: string | number) {
       cancelRef.current?.abort();
       cancelRef.current = new AbortController();
       setState((oldState) => ({
@@ -19,13 +19,7 @@ export function useAnilist(perform: CallableFunction) {
         isLoading: true,
       }));
       try {
-        const results = await perform(searchText, cancelRef.current.signal);
-
-        setState((oldState) => ({
-          ...oldState,
-          results: results,
-          isLoading: false,
-        }));
+        await perform(variables, cancelRef.current.signal);
       } catch (error) {
         setState((oldState) => ({
           ...oldState,
@@ -33,11 +27,11 @@ export function useAnilist(perform: CallableFunction) {
         }));
 
         if (error instanceof AbortError) {
-          console.debug("Abort Fetching SeachName:", searchText);
+          console.debug("Abort Fetching SeachName:", variables);
           return;
         }
 
-        console.error("Error Fetching SeachName:", searchText, error);
+        console.error("Error Fetching SeachName:", variables, error);
         showToast({ style: Toast.Style.Failure, title: "Could not perform search", message: String(error) });
       }
     },
@@ -46,6 +40,7 @@ export function useAnilist(perform: CallableFunction) {
 
   return {
     state: state,
+    setState: setState,
     anilist: anilist,
   };
 }
