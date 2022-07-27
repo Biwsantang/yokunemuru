@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 import { getSdk } from "../query/media.generated";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Media } from "../schema.generated";
 
 const api = getSdk(
@@ -17,10 +17,8 @@ export const useSearch = (searchText: string | undefined) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    async function fetch() {
-
+    (async () => {
       try {
-
         if (searchText === undefined || !searchText || searchText.trim().length === 0) return;
 
         setLoading(true);
@@ -29,12 +27,11 @@ export const useSearch = (searchText: string | undefined) => {
 
         const query = { name: searchText };
 
-        console.debug("0/1 Fetching", searchText)
+        console.debug("0/1 Fetching", searchText);
         const result = await api.searchName(query);
-        console.debug("1/1 Fetching", searchText)
+        console.debug("1/1 Fetching", searchText);
 
-        setResult(result.Page?.media as Media[])
-
+        setResult(result.Page?.media as Media[]);
       } catch (error) {
         if (error instanceof Error) {
           setError(error);
@@ -45,8 +42,7 @@ export const useSearch = (searchText: string | undefined) => {
       } finally {
         setLoading(false);
       }
-    }
-    fetch();
+    })();
   }, [searchText]);
 
   return {
@@ -54,5 +50,4 @@ export const useSearch = (searchText: string | undefined) => {
     error,
     loading,
   };
-
-}
+};
