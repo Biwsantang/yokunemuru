@@ -1,4 +1,4 @@
-import { List, showToast, Toast } from "@raycast/api";
+import { getPreferenceValues, List, showToast, Toast } from "@raycast/api";
 import { useState } from "react";
 
 import { SearchListItem } from "./components/SearchListItem";

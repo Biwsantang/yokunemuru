@@ -2,6 +2,7 @@ import { GraphQLClient } from "graphql-request";
 import { getSdk } from "../query/media.generated";
 import { useState, useEffect } from "react";
 import { Media } from "../schema.generated";
+import { getPreferenceValues } from "@raycast/api";
 
 const api = getSdk(
   new GraphQLClient("https://graphql.anilist.co", {
@@ -10,6 +11,14 @@ const api = getSdk(
     },
   })
 );
+
+interface Preferences {
+  nsfw : boolean
+}
+
+const preferences = getPreferenceValues<Preferences>();
+
+console.debug("Preferences",preferences)
 
 export const useSearch = (searchText: string | undefined) => {
   const [result, setResult] = useState<Media[]>([]);
@@ -25,7 +34,9 @@ export const useSearch = (searchText: string | undefined) => {
 
         console.debug("search:", searchText);
 
-        const query = { name: searchText };
+        const query = { name: searchText, ...preferences.nsfw ? {  } : { isAdult: false } };
+
+        console.debug("query", query);
 
         console.debug("0/1 Fetching", searchText);
         const result = await api.searchName(query);
@@ -72,8 +83,13 @@ export const useSeasonPage = () => {
         let hasNextPage = false;
 
         do {
+
+          const query = { page: page, ...preferences.nsfw ? {  } : { isAdult: false } }
+
+          console.debug("query", query);
+
           console.debug("0/1 Fetching page", page);
-          const result = await api.seasonal({ page: page});
+          const result = await api.seasonal(query);
           console.debug("1/1 Fetching page", page);
 
           setResult((prev) => prev.concat(result.Page?.media as Media[]));

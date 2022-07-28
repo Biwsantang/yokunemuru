@@ -14,13 +14,29 @@
       "name": "search",
       "title": "Search Anime",
       "description": "Search Anime from Anilist",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [{
+        "name": "nsfw",
+        "description": "Show NSFW content",
+        "type": "checkbox",
+        "default": false,
+        "required": false,
+        "label": "enable NSFW"
+      }]
     },
     {
       "name": "seasonPage",
       "title": "This season Anime",
       "description": "Show this season Anime",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [{
+        "name": "nsfw",
+        "description": "Show NSFW content",
+        "type": "checkbox",
+        "default": false,
+        "required": false,
+        "label": "enable NSFW"
+      }]
     }
   ],
   "dependencies": {

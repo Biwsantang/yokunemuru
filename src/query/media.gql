@@ -1,6 +1,6 @@
-query searchName($name: String) {
+query searchName($name: String, $isAdult: Boolean) {
   Page {
-    media(search: $name, format_in: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC]) {
+    media(search: $name, isAdult: $isAdult, format_in: [TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC]) {
       id
       title {
         romaji
@@ -18,13 +18,13 @@ query searchName($name: String) {
   }
 }
 
-query seasonal($page: Int) {
+query seasonal($page: Int, $isAdult: Boolean) {
   Page(page: $page) {
     pageInfo {
       currentPage
       hasNextPage
     }
-    media(season: SUMMER, seasonYear: 2022, sort: [SCORE_DESC]) {
+    media(isAdult: $isAdult, season: SUMMER, seasonYear: 2022, sort: [SCORE_DESC]) {
       id
       title {
         romaji
