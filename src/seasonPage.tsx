@@ -1,8 +1,10 @@
-import { List, showToast, Toast } from "@raycast/api";
+import { Cache, List, showToast, Toast } from "@raycast/api";
 import { useState } from "react";
 
 import { SearchListItem } from "./components/SearchListItem";
 import { useSeasonPage } from "./lib/services";
+
+const cache = new Cache();
 
 export default function Command() {
   const [searchText, setSearchText] = useState<string>();

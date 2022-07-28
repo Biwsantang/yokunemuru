@@ -15,32 +15,37 @@
       "title": "Search Anime",
       "description": "Search Anime from Anilist",
       "mode": "view",
-      "preferences": [{
-        "name": "nsfw",
-        "description": "Show NSFW content",
-        "type": "checkbox",
-        "default": false,
-        "required": false,
-        "label": "enable NSFW"
-      }]
+      "preferences": [
+        {
+          "name": "nsfw",
+          "description": "Show NSFW content",
+          "type": "checkbox",
+          "default": false,
+          "required": false,
+          "label": "enable NSFW"
+        }
+      ]
     },
     {
       "name": "seasonPage",
       "title": "This season Anime",
       "description": "Show this season Anime",
       "mode": "view",
-      "preferences": [{
-        "name": "nsfw",
-        "description": "Show NSFW content",
-        "type": "checkbox",
-        "default": false,
-        "required": false,
-        "label": "enable NSFW"
-      }]
+      "preferences": [
+        {
+          "name": "nsfw",
+          "description": "Show NSFW content",
+          "type": "checkbox",
+          "default": false,
+          "required": false,
+          "label": "enable NSFW"
+        }
+      ]
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.38.1",
+    "date-fns": "^2.29.1",
     "graphql-request": "^4.3.0",
     "node-fetch": "^3.2.9"
   },
