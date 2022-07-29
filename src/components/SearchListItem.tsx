@@ -1,7 +1,7 @@
 import { Action, ActionPanel, List } from "@raycast/api";
 import { Media, MediaFormat } from "../schema.generated";
 
-export function SearchListItem({ media }: { media: Media }) {
+export function SearchListItem({ media, refresh }: { media: Media, refresh?: CallableFunction }) {
   return (
     <List.Item
       icon={media.coverImage?.medium?.toString() ?? ""}
@@ -24,6 +24,7 @@ export function SearchListItem({ media }: { media: Media }) {
         media.siteUrl && (
           <ActionPanel>
             <ActionPanel.Section>
+              {refresh && <Action title="Refresh" onAction={() => refresh()} />}
               <Action.OpenInBrowser title="Open in Browser" url={media.siteUrl.toString() ?? "https://anilist.co"} />
             </ActionPanel.Section>
           </ActionPanel>
