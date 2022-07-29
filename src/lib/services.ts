@@ -15,13 +15,12 @@ const api = getSdk(
 
 interface Preferences {
   nsfw: boolean;
-}
+};
 
 const preferences = getPreferenceValues<Preferences>();
+console.debug("Preferences", preferences);
 
 const cache = new Cache();
-
-console.debug("Preferences", preferences);
 
 export const useSearch = (searchText: string | undefined) => {
   const [result, setResult] = useState<Media[]>([]);
@@ -77,19 +76,19 @@ export const useSeasonPage = () => {
 
   useEffect(() => {
     fetch()
-  }, [])
+  }, []);
 
   const refresh = () => {
     console.debug("Clear cache")
     cache.clear()
+    console.log("Refresh")
     fetch()
-  }
+  };
 
   const fetch = async () => {
     try {
 
       setResult([])
-
       setLoading(true);
 
       if (cache.has("seasonPage")) {
@@ -105,34 +104,35 @@ export const useSeasonPage = () => {
 
       console.debug("Fetching this season's page");
 
-      let page = 1;
-      let hasNextPage = false;
+      const pageQuery = { page: 1, hasNextPage: false, preferences: preferences.nsfw }
 
       do {
-        const query = { page: page, ...(preferences.nsfw ? {} : { isAdult: false }) };
+        const query = { page: pageQuery.page, ...(pageQuery.preferences ? {} : { isAdult: false }) };
 
         console.debug("query", query);
 
-        console.debug("0/1 Fetching page", page);
+        console.debug("0/1 Fetching page", query.page);
         const result = await api.seasonal(query);
-        console.debug("1/1 Fetching page", page);
-
-        setResult((prev) => prev.concat(result.Page?.media as Media[]));
+        console.debug("1/1 Fetching page", query.page);
 
         if (result.Page?.pageInfo?.currentPage == null || result.Page?.pageInfo?.hasNextPage == null)
           throw new Error("An error occurred while searching for anime");
 
-        page = result.Page?.pageInfo?.currentPage + 1;
-        hasNextPage = result.Page?.pageInfo?.hasNextPage;
+        pageQuery.page = result.Page?.pageInfo?.currentPage + 1;
+        pageQuery.hasNextPage = result.Page?.pageInfo?.hasNextPage;
 
-      } while (hasNextPage);
+        setResult((prev) => {
+          const media = prev.concat(result.Page?.media as Media[]);
+          console.debug("Show Result", media.length)
+          if (!pageQuery.hasNextPage) {
+            console.debug("Set cache");
+            console.debug("Cache TTL", add(new Date(), { days: 1 }));
+            cache.set("seasonPage", JSON.stringify({ result: media, ttl: add(new Date(), { days: 1 }) }));
+          }
+          return media
+        });
 
-      setResult((result) => {
-        console.debug("Set cache");
-        console.debug("Cache TTL", add(new Date(), { days: 1 }));
-        cache.set("seasonPage", JSON.stringify({ result: result, ttl: add(new Date(), { days: 1 }) }));
-        return result
-      })
+      } while (pageQuery.hasNextPage);
 
     } catch (error) {
       if (error instanceof Error) {
@@ -142,6 +142,7 @@ export const useSeasonPage = () => {
       }
       setResult([]);
     } finally {
+      console.debug("Finish Loading")
       setLoading(false);
     }
   }

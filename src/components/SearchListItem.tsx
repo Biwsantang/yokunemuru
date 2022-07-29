@@ -24,8 +24,8 @@ export function SearchListItem({ media, refresh }: { media: Media, refresh?: Cal
         media.siteUrl && (
           <ActionPanel>
             <ActionPanel.Section>
-              {refresh && <Action title="Refresh" onAction={() => refresh()} />}
               <Action.OpenInBrowser title="Open in Browser" url={media.siteUrl.toString() ?? "https://anilist.co"} />
+              {refresh && <Action title="Refresh" onAction={() => refresh()} />}
             </ActionPanel.Section>
           </ActionPanel>
         )
