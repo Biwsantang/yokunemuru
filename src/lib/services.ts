@@ -83,7 +83,7 @@ export const useSeasonPage = () => {
         if (cache.has("seasonPage")) {
           console.debug("Hit cache");
           const seasonPageCache = JSON.parse(cache.get("seasonPage") as string, (key, value) => key == "ttl" ? parseISO(value) : value) as { result: Media[]; ttl: Date };
-          if (compareAsc(seasonPageCache.ttl, new Date())) {
+          if (compareAsc(seasonPageCache.ttl, new Date()) == 1) {
             console.debug("Loading from cache");
             console.debug("TTL", seasonPageCache.ttl)
             setResult(seasonPageCache.result);
