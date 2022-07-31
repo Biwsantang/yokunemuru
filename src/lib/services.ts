@@ -1,7 +1,7 @@
 import { GraphQLClient } from "graphql-request";
-import { getSdk } from "../query/media.generated";
+import { getSdk, SeasonalQueryVariables } from "../query/media.generated";
 import { useState, useEffect, useCallback } from "react";
-import { Media } from "../schema.generated";
+import { Media, MediaSort } from "../schema.generated";
 import { Cache, getPreferenceValues } from "@raycast/api";
 import { add, compareAsc, parseISO } from "date-fns";
 
@@ -15,6 +15,7 @@ const api = getSdk(
 
 interface Preferences {
   nsfw: boolean;
+  sortBy: string;
 };
 
 const preferences = getPreferenceValues<Preferences>();
@@ -104,10 +105,10 @@ export const useSeasonPage = () => {
 
       console.debug("Fetching this season's page");
 
-      const pageQuery = { page: 1, hasNextPage: false, preferences: preferences.nsfw }
+      const pageQuery = { page: 1, hasNextPage: false }
 
       do {
-        const query = { page: pageQuery.page, ...(pageQuery.preferences ? {} : { isAdult: false }) };
+        const query: SeasonalQueryVariables = { page: pageQuery.page, ...(preferences.nsfw ? {} : { isAdult: false }), sort: [(<any>MediaSort)[preferences.sortBy]] };
 
         console.debug("query", query);
 

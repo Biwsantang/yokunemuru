@@ -14,6 +14,7 @@ export type SearchNameQuery = { __typename?: 'Query', Page?: { __typename?: 'Pag
 export type SeasonalQueryVariables = Types.Exact<{
   page?: Types.InputMaybe<Types.Scalars['Int']>;
   isAdult?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  sort?: Types.InputMaybe<Array<Types.InputMaybe<Types.MediaSort>> | Types.InputMaybe<Types.MediaSort>>;
 }>;
 
 
@@ -46,13 +47,13 @@ export const SearchNameDocument = gql`
 }
     `;
 export const SeasonalDocument = gql`
-    query seasonal($page: Int, $isAdult: Boolean) {
+    query seasonal($page: Int, $isAdult: Boolean, $sort: [MediaSort]) {
   Page(page: $page) {
     pageInfo {
       currentPage
       hasNextPage
     }
-    media(isAdult: $isAdult, season: SUMMER, seasonYear: 2022, sort: [SCORE_DESC]) {
+    media(isAdult: $isAdult, season: SUMMER, seasonYear: 2022, sort: $sort) {
       id
       title {
         romaji

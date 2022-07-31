@@ -39,6 +39,22 @@
           "default": false,
           "required": false,
           "label": "enable NSFW"
+        },
+        {
+          "name": "sortBy",
+          "description": "Sort Anime By",
+          "type": "dropdown",
+          "data": [
+            {
+              "title": "Popularity",
+              "value": "PopularityDesc"
+            },
+            {
+              "title": "Score",
+              "value": "ScoreDesc"
+            }
+          ],
+          "default": "PopularityDesc"
         }
       ]
     }
