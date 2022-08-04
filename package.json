@@ -11,19 +11,66 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "index",
+      "name": "search",
       "title": "Search Anime",
-      "description": "Search Anime from Anilist (Unofficial)",
-      "mode": "view"
+      "description": "Search Anime from Anilist",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "nsfw",
+          "description": "Show NSFW content",
+          "type": "checkbox",
+          "default": false,
+          "required": false,
+          "label": "enable NSFW"
+        }
+      ]
+    },
+    {
+      "name": "seasonPage",
+      "title": "This season Anime",
+      "description": "Show this season Anime",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "nsfw",
+          "description": "Show NSFW content",
+          "type": "checkbox",
+          "default": false,
+          "required": false,
+          "label": "enable NSFW"
+        },
+        {
+          "name": "sortBy",
+          "description": "Sort Anime By",
+          "type": "dropdown",
+          "data": [
+            {
+              "title": "Popularity",
+              "value": "PopularityDesc"
+            },
+            {
+              "title": "Score",
+              "value": "ScoreDesc"
+            }
+          ],
+          "default": "PopularityDesc"
+        }
+      ]
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.32.1",
-    "node-fetch": "^3.0.0"
+    "@raycast/api": "^1.38.1",
+    "date-fns": "^2.29.1",
+    "graphql-request": "^4.3.0",
+    "node-fetch": "^3.2.9"
   },
   "devDependencies": {
-    "@types/node": "~16.10.0",
-    "@types/react": "^17.0.28",
+    "@graphql-codegen/cli": "^2.9.1",
+    "@graphql-codegen/near-operation-file-preset": "^2.4.0",
+    "@graphql-codegen/typescript": "^2.7.2",
+    "@graphql-codegen/typescript-graphql-request": "^4.5.2",
+    "@graphql-codegen/typescript-operations": "^2.5.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^7.32.0",
@@ -36,6 +83,7 @@
     "build": "ray build -e dist",
     "dev": "ray develop",
     "fix-lint": "ray lint --fix",
-    "lint": "ray lint"
+    "lint": "ray lint",
+    "gen": "graphql-codegen --config codegen.yml"
   }
 }
