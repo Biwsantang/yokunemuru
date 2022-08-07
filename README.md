@@ -1,7 +1,7 @@
 <h1 align="center">Yokunemuru</h1>
 
 <p align="center">
-Search Anime from Anilist (Unofficial)
+[Raycast Extension](https://www.raycast.com) to Search Anime from Anilist (Unofficial)
 </p>
 
 ## Screenshot
