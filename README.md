@@ -1,8 +1,6 @@
-<h1 align="center">Yokunemuru</h1>
+# Yokunemuru
 
-<p align="center">
 [Raycast Extension](https://www.raycast.com) to Search Anime from Anilist (Unofficial)
-</p>
 
 ## Screenshot
 
